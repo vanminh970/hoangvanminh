@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment CNTT 4.0 - FPT Polytechnic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Light Theme Variables */
+            --bg-primary: #f4f7fb;
+            --bg-secondary: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --accent: #f97316; /* FPT Orange */
+            --accent-hover: #ea580c;
+            --accent-secondary: #3b82f6;
+            --border: #e2e8f0;
+            --shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.1);
+            --success: #10b981;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme Variables */
+            --bg-primary: #070913;
+            --bg-secondary: #0f1424;
+            --bg-card: rgba(22, 29, 51, 0.85);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #ff7b29;
+            --accent-hover: #ff944d;
+            --accent-secondary: #6366f1;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
+            --success: #34d399;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ================= GALAXY INTRO SCREEN ================= */
+        #galaxy-intro {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1), transform 0.9s ease, visibility 0.9s;
+        }
+
+        #galaxy-intro.hidden {
+            opacity: 0;
+            transform: scale(1.15);
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        #galaxy-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .galaxy-content {
+            position: relative;
+            z-index: 2;
+            max-width: 750px;
+            padding: 2rem;
+            background: rgba(10, 14, 28, 0.45);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 28px;
+            box-shadow: 0 0 60px rgba(99, 102, 241, 0.3);
+            animation: floatHero 4s ease-in-out infinite;
+        }
+
+        @keyframes floatHero {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .badge-fpt {
+            display: inline-block;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, #f97316, #ec4899);
+            color: white;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 50px;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .galaxy-content h1 {
+            font-size: clamp(2rem, 5vw, 3.4rem);
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, #a5b4fc, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .galaxy-content p {
+            color: #cbd5e1;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .btn-enter {
+            padding: 16px 38px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #f97316 0%, #6366f1 100%);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(249, 115, 22, 0.5);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .btn-enter:hover {
+            transform: scale(1.06);
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.8);
+        }
+
+        /* ================= MAIN APP LAYOUT ================= */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-card);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.25rem;
+        }
+
+        .brand-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 12px var(--accent);
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-icon {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-icon:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            padding: 12px 22px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.25s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 8px 20px -6px rgba(249, 115, 22, 0.5);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards & Grids */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.75rem;
+            box-shadow: var(--shadow);
+        }
+
+        .card h2 {
+            font-size: 1.35rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: rgba(249, 115, 22, 0.15);
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+
+        /* Checklist Items */
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            background: var(--bg-primary);
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .checklist-item:hover {
+            border-color: var(--accent);
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent);
+            margin-top: 2px;
+            cursor: pointer;
+        }
+
+        .checklist-item.checked span {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        /* Progress Bar */
+        .progress-wrap {
+            background: var(--bg-primary);
+            height: 12px;
+            border-radius: 99px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* File Upload Area */
+        .upload-zone {
+            border: 2px dashed var(--accent);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            background: rgba(249, 115, 22, 0.04);
+            cursor: pointer;
+            margin: 1rem 0;
+        }
+
+        .upload-zone:hover {
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        .file-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Interactive Note App (Part 2) */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-ai {
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            color: #fff;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .note-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.2rem;
+            position: relative;
+        }
+
+        .note-day {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--accent-secondary);
+            text-transform: uppercase;
+        }
+
+        .delete-note {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 10px;
+            background: var(--bg-primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .ai-box {
+            margin-top: 1rem;
+            padding: 1.2rem;
+            border-radius: 14px;
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            display: none;
+        }
+
+        /* Score Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            color: var(--accent);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= 1. GALAXY UNIVERSE INTRO ================= -->
+    <section id="galaxy-intro">
+        <canvas id="galaxy-canvas"></canvas>
+        <div class="galaxy-content">
+            <span class="badge-fpt">FPT POLYTECHNIC • NĂM 2026</span>
+            <h1>Vũ Trụ Tri Thức CNTT 4.0</h1>
+            <p>
+                Khám phá không gian Assignment môn học: Tự xây dựng <strong>Trợ lý học tập số</strong> với NotebookLM 
+                và kiến tạo <strong>Ứng dụng Quản lý Ghi chú AI</strong> cá nhân.
+            </p>
+            <button class="btn-enter" onclick="enterUniverse()">Khám phá Bài Tập 🚀</button>
+        </div>
+    </section>
+
+    <!-- ================= 2. MAIN INTERFACE ================= -->
+    <header class="navbar">
+        <div class="brand">
+            <span class="brand-dot"></span>
+            <span>CNTT 4.0 — ASSIGNMENT PORTAL</span>
+        </div>
+        <div class="nav-controls">
+            <button class="btn-icon" onclick="showGalaxy()">🌌 Xem lại Galaxy</button>
+            <button class="btn-icon" id="theme-toggle" onclick="toggleTheme()">☀️ Chế độ Sáng</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab(event, 'overview')">📌 Thông tin & Mục tiêu</button>
+            <button class="tab-btn" onclick="openTab(event, 'part1')">📚 Phần 1: Thư viện số (NotebookLM)</button>
+            <button class="tab-btn" onclick="openTab(event, 'part2')">🤖 Phần 2: Ứng dụng Ghi chú AI</button>
+            <button class="tab-btn" onclick="openTab(event, 'submit')">📦 Nộp bài & Đánh giá (60%)</button>
+        </div>
+
+        <!-- TAB 1: TỔNG QUAN -->
+        <section id="overview" class="tab-content active">
+            <div class="grid-4">
+                <div class="card">
+                    <span class="tag">Mục tiêu (A)</span>
+                    <h3>Xu hướng CNTT</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem;">Hiểu tổng quan về sự phát triển và nhận biết xu hướng tương lai của ngành CNTT.</p>
+                </div>
+                <div class="card">
+                    <span class="tag">Mục tiêu (B)</span>
+                    <h3>Ứng dụng Công cụ</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem;">Sử dụng thành thạo các công cụ AI & quản lý tri thức phục vụ học tập hiệu quả.</p>
+                </div>
+                <div class="card">
+                    <span class="tag">Mục tiêu (C)</span>
+                    <h3>Xây dựng Ứng dụng</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem;">Tự thiết kế và xây dựng ứng dụng nhỏ phục vụ nhu cầu quản lý cá nhân.</p>
+                </div>
+                <div class="card">
+                    <span class="tag">Mục tiêu (D)</span>
+                    <h3>Định hướng Nghề nghiệp</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem;">Cung cấp thêm thông tin về các chuyên ngành, nghề nghiệp trong lĩnh vực CNTT.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📋 Thông tin chung về Assignment</h2>
+                <table>
+                    <tr>
+                        <th>Hạng mục</th>
+                        <th>Chi tiết quy định</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Đơn vị đào tạo</strong></td>
+                        <td>Trường Cao đẳng FPT Polytechnic (Ban hành năm 2026)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Module / Môn học</strong></td>
+                        <td>CNTT 4.0 — Tỷ trọng điểm: <strong>60% tổng điểm môn</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Người điều phối</strong></td>
+                        <td>Thầy Lã Ngọc Quang</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hình thức thực hiện</strong></td>
+                        <td>Sinh viên tự bản thân thực hiện độc lập & bảo vệ trực tiếp trước giảng viên</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- TAB 2: PHẦN 1 - TRỢ LÝ HỌC TẬP -->
+        <section id="part1" class="tab-content">
+            <div class="grid-2">
+                <div class="card">
+                    <span class="tag">Công cụ: Google Notebook LM</span>
+                    <h2>✅ Danh mục Yêu cầu Phần 1</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        Tích vào từng mục khi bạn đã hoàn thành thu thập dữ liệu vào NotebookLM:
+                    </p>
+                    
+                    <div class="progress-wrap">
+                        <div class="progress-bar" id="p1-progress"></div>
+                    </div>
+                    <p style="font-size: 0.85rem; font-weight: 700; margin-bottom: 1rem;" id="p1-status">Tiến độ hoàn thành: 0%</p>
+
+                    <label class="checklist-item">
+                        <input type="checkbox" class="p1-check" onchange="updateP1Progress()">
+                        <span><strong>Y1. Tài liệu cốt lõi:</strong> Thu thập đầy đủ tất cả 8 slide bài học của môn học.</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" class="p1-check" onchange="updateP1Progress()">
+                        <span><strong>Y2a. Dạng tập tin (File):</strong> Bổ sung tài liệu PDF, Word hoặc văn bản liên quan.</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" class="p1-check" onchange="updateP1Progress()">
+                        <span><strong>Y2b. Đa phương tiện:</strong> Đính kèm Hình ảnh minh họa hoặc Video bài giảng.</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" class="p1-check" onchange="updateP1Progress()">
+                        <span><strong>Y2c. Link tham chiếu:</strong> Lưu trữ các liên kết website kiến thức mở rộng.</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" class="p1-check" onchange="updateP1Progress()">
+                        <span><strong>Y2d. Ghi chú cá nhân:</strong> Viết ghi chú tổng hợp của bản thân về tài liệu đã thu thập.</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" class="p1-check" onchange="updateP1Progress()">
+                        <span><strong>Y3 (Mở rộng):</strong> Xây dựng thêm "thư viện cá nhân" cho các môn học khác.</span>
+                    </label>
+                </div>
+
+                <!-- Khu vực tải tài liệu thực tế -->
+                <div class="card">
+                    <span class="tag">Kho lưu trữ mô phỏng</span>
+                    <h2>📂 Đính kèm & Quản lý Tài liệu</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem;">
+                        Tải lên các file slide bài học (PDF, DOCX, MP4, PNG...) hoặc thêm link tham chiếu để kiểm tra danh mục thư viện số của bạn:
+                    </p>
+
+                    <div class="upload-zone" onclick="document.getElementById('file-input').click()">
+                        <p style="font-size: 2rem; margin-bottom: 8px;">📁</p>
+                        <p style="font-weight: 700;">Nhấn để chọn tài liệu từ máy tính</p>
+                        <p style="font-size: 0.82rem; color: var(--text-secondary);">Hỗ trợ PDF, Word, Slide, Hình ảnh, Video</p>
+                        <input type="file" id="file-input" multiple hidden onchange="handleFileUpload(event)">
+                    </div>
+
+                    <div style="display: flex; gap: 8px; margin-bottom: 1rem;">
+                        <input type="text" id="ref-link" placeholder="Dán link website tham chiếu hoặc ghi chú nhanh...">
+                        <button class="btn-primary" onclick="addReferenceLink()">Thêm</button>
+                    </div>
+
+                    <ul class="file-list" id="library-list">
+                        <li class="file-item">
+                            <span>📄 Slide_Bai_1_den_8_CNTT4.0.pdf</span>
+                            <span style="color: var(--success); font-weight: 700;">Sẵn sàng</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: PHẦN 2 - ỨNG DỤNG QUẢN LÝ GHI CHÚ -->
+        <section id="part2" class="tab-content">
+            <div class="grid-2">
+                <!-- Bản vẽ phác thảo Y4 -->
+                <div class="card">
+                    <span class="tag">Yêu cầu Y4 • Figma / Canva / DrawIO</span>
+                    <h2>🎨 Bản vẽ Phác thảo Ứng dụng</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 1rem;">
+                        Đảm bảo bản thiết kế của bạn thể hiện đủ 3 thành phần: <strong>(a) Giao diện chính</strong>, <strong>(b) Giao diện chức năng chính</strong>, và <strong>(c) Luồng vận hành</strong>.
+                    </p>
+                    <div class="upload-zone" onclick="document.getElementById('mockup-input').click()">
+                        <p style="font-weight: 700;">🖼️ Tải lên ảnh chụp bản vẽ phác thảo (Wireframe)</p>
+                        <input type="file" id="mockup-input" accept="image/*" hidden onchange="previewMockup(event)">
+                    </div>
+                    <div id="mockup-preview" style="margin-top: 1rem; text-align: center;"></div>
+                </div>
+
+                <!-- Thêm ghi chú mới Y5 & Y6 -->
+                <div class="card">
+                    <span class="tag">Yêu cầu Y5 & Y6 • Google AI Studio</span>
+                    <h2>✍️ Trình Quản lý Ghi chú Cá nhân</h2>
+                    <div>
+                        <span class="stat-pill" id="note-count-pill">📝 Số ghi chú: 10 / 10 (Đạt chuẩn)</span>
+                        <span class="stat-pill" id="day-count-pill">📅 Thời gian áp dụng: 5 ngày (Đạt chuẩn)</span>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <input type="text" id="note-title" placeholder="Tiêu đề ghi chú (VD: Tổng hợp hàm Excel, Lịch học...)">
+                    </div>
+                    <div class="form-group">
+                        <select id="note-day">
+                            <option value="Ngày 1">Ngày 1</option>
+                            <option value="Ngày 2">Ngày 2</option>
+                            <option value="Ngày 3">Ngày 3</option>
+                            <option value="Ngày 4">Ngày 4</option>
+                            <option value="Ngày 5">Ngày 5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="note-body" rows="2" placeholder="Nội dung ghi chú có ý nghĩa..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-primary" onclick="addNote()">+ Lưu Ghi Chú</button>
+                        <button class="btn-ai" onclick="runAISummary()">✨ AI Phân Tích & Tóm Tắt (Y6)</button>
+                    </div>
+
+                    <div class="ai-box" id="ai-result"></div>
+                </div>
+            </div>
+
+            <!-- Danh sách 10 ghi chú mẫu đạt chuẩn -->
+            <div class="card">
+                <h2>🗂️ Danh sách Ghi chú đã lưu (Tối thiểu 10 ghi chú trong 5 ngày)</h2>
+                <div class="notes-grid" id="notes-container"></div>
+            </div>
+        </section>
+
+        <!-- TAB 4: NỘP BÀI & ĐÁNH GIÁ -->
+        <section id="submit" class="tab-content">
+            <div class="grid-2">
+                <div class="card">
+                    <span class="tag">Quy chuẩn đóng gói sản phẩm</span>
+                    <h2>📦 Tạo tên file nén .ZIP chuẩn</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 1rem;">
+                        Nhập thông tin của bạn để tạo tên file nén chính xác theo quy định của trường:
+                    </p>
+                    <div class="form-group">
+                        <input type="text" id="sv-id" placeholder="Nhập Mã sinh viên (VD: PS12345)" oninput="generateZipName()">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="sv-name" placeholder="Nhập Họ tên không dấu (VD: NguyenVanA)" oninput="generateZipName()">
+                    </div>
+                    <div style="padding: 14px; background: var(--bg-primary); border-radius: 12px; border: 1px dashed var(--accent);">
+                        <p style="font-size: 0.82rem; color: var(--text-secondary);">Tên file nộp bài của bạn:</p>
+                        <p id="zip-output" style="font-weight: 800; color: var(--accent); font-size: 1.05rem; margin-top: 4px;">
+                            PS12345-NguyenVanA_CNTT4.0_Assignment.zip
+                        </p>
+                    </div>
+                    <ul style="margin-top: 1.2rem; padding-left: 1.2rem; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.7;">
+                        <li><strong>Bắt buộc:</strong> Báo cáo quá trình thực hiện (PDF, Word hoặc Google Docs).</li>
+                        <li><strong>Tùy chọn bổ sung:</strong> Slide trình bày tóm tắt & Thuyết trình trước lớp.</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <span class="tag">Cơ cấu điểm số: 60%</span>
+                    <h2>🏆 Bảng Đánh giá & Tiêu chí Bảo vệ</h2>
+                    <table>
+                        <tr>
+                            <th>Giai đoạn</th>
+                            <th>Tỷ trọng</th>
+                            <th>Hình thức đánh giá</th>
+                        </tr>
+                        <tr>
+                            <td>Giai đoạn 1</td>
+                            <td><strong>10%</strong></td>
+                            <td>Giảng viên kiểm tra & nhận xét tiến độ Phần 1</td>
+                        </tr>
+                        <tr>
+                            <td>Giai đoạn 2</td>
+                            <td><strong>10%</strong></td>
+                            <td>Giảng viên kiểm tra & nhận xét tiến độ Phần 2</td>
+                        </tr>
+                        <tr>
+                            <td>Bảo vệ Assignment</td>
+                            <td><strong>40%</strong></td>
+                            <td>Thực hành trực tiếp chức năng & Vấn đáp trước hội đồng/giảng viên</td>
+                        </tr>
+                    </table>
+                    <div style="margin-top: 1.2rem; padding: 12px; background: var(--bg-primary); border-radius: 12px;">
+                        <p style="font-weight: 700; margin-bottom: 6px;">4 Tiêu chí chấm thực hành:</p>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                            1. Nội dung đầy đủ • 2. Đúng thời gian quy định • 3. Trình bày rõ ràng, mạch lạc • 4. Sản phẩm đẹp, sinh động, sáng tạo.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        /* ================= GALAXY 3D SPIRAL ANIMATION ================= */
+        const canvas = document.getElementById('galaxy-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, particles = [], bgStars = [];
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Background static twinkling stars
+        for (let i = 0; i < 220; i++) {
+            bgStars.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                r: Math.random() * 1.5,
+                alpha: Math.random(),
+                speed: 0.005 + Math.random() * 0.015
+            });
+        }
+
+        // Spiral Galaxy Arms
+        const arms = 4;
+        const particleCount = 900;
+        const colors = ['#f97316', '#818cf8', '#ec4899', '#38bdf8', '#ffffff'];
+
+        for (let i = 0; i < particleCount; i++) {
+            const armIndex = i % arms;
+            const distance = Math.random() * Math.min(width, height) * 0.45;
+            const spinAngle = distance * 0.009;
+            const branchAngle = (armIndex / arms) * Math.PI * 2;
+            const randomOffset = (Math.random() - 0.5) * (distance * 0.35);
+
+            particles.push({
+                distance: distance,
+                angle: branchAngle + spinAngle + (Math.random() - 0.5) * 0.5,
+                speed: 0.0015 + (1 / (distance + 40)) * 0.12,
+                size: Math.random() * 2.4 + 0.6,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                offset: randomOffset
+            });
+        }
+
+        function animateGalaxy() {
+            ctx.fillStyle = 'rgba(7, 9, 19, 0.25)';
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw background stars
+            bgStars.forEach(s => {
+                s.alpha += s.speed;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(Math.sin(s.alpha))})`;
+                ctx.fill();
+            });
+
+            const cx = width / 2;
+            const cy = height / 2;
+
+            // Core glow
+            const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, 120);
+            gradient.addColorStop(0, 'rgba(255, 220, 180, 0.9)');
+            gradient.addColorStop(0.3, 'rgba(249, 115, 22, 0.35)');
+            gradient.addColorStop(0.7, 'rgba(99, 102, 241, 0.1)');
+            gradient.addColorStop(1, 'transparent');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 120, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw spiral particles
+            particles.forEach(p => {
+                p.angle += p.speed;
+                const x = cx + Math.cos(p.angle) * p.distance + Math.sin(p.angle) * (p.offset * 0.2);
+                const y = cy + Math.sin(p.angle) * (p.distance * 0.62) + Math.cos(p.angle) * (p.offset * 0.2);
+
+                ctx.beginPath();
+                ctx.arc(x, y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+            });
+
+            requestAnimationFrame(animateGalaxy);
+        }
+        animateGalaxy();
+
+        function enterUniverse() {
+            document.getElementById('galaxy-intro').classList.add('hidden');
+        }
+
+        function showGalaxy() {
+            document.getElementById('galaxy-intro').classList.remove('hidden');
+        }
+
+        /* ================= LIGHT / DARK THEME TOGGLE ================= */
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.getElementById('theme-toggle');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.setAttribute('data-theme', 'light');
+                btn.innerHTML = '🌙 Chế độ Tối';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                btn.innerHTML = '☀️ Chế độ Sáng';
+            }
+        }
+
+        /* ================= TABS NAVIGATION ================= */
+        function openTab(evt, tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+
+        /* ================= PART 1: PROGRESS & FILE UPLOAD ================= */
+        function updateP1Progress() {
+            const checks = document.querySelectorAll('.p1-check');
+            let checked = 0;
+            checks.forEach(c => {
+                if (c.checked) {
+                    checked++;
+                    c.parentElement.classList.add('checked');
+                } else {
+                    c.parentElement.classList.remove('checked');
+                }
+            });
+            const percent = Math.round((checked / checks.length) * 100);
+            document.getElementById('p1-progress').style.width = percent + '%';
+            document.getElementById('p1-status').innerText = `Tiến độ hoàn thành: ${percent}% (${checked}/${checks.length} yêu cầu)`;
+        }
+
+        function handleFileUpload(event) {
+            const files = event.target.files;
+            const list = document.getElementById('library-list');
+            for (let file of files) {
+                const li = document.createElement('li');
+                li.className = 'file-item';
+                li.innerHTML = `<span>📎 ${file.name} (${(file.size/1024).toFixed(1)} KB)</span>
+                                <span style="color: var(--success); font-weight: 700;">Đã tải lên</span>`;
+                list.appendChild(li);
+            }
+        }
+
+        function addReferenceLink() {
+            const input = document.getElementById('ref-link');
+            if (!input.value.trim()) return;
+            const list = document.getElementById('library-list');
+            const li = document.createElement('li');
+            li.className = 'file-item';
+            li.innerHTML = `<span>🔗 ${input.value}</span>
+                            <span style="color: var(--accent-secondary); font-weight: 700;">Tham chiếu</span>`;
+            list.appendChild(li);
+            input.value = '';
+        }
+
+        /* ================= PART 2: WIREFRAME & 10 NOTES APP ================= */
+        function previewMockup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('mockup-preview').innerHTML = 
+                    `<img src="${e.target.result}" style="max-width:100%; border-radius:12px; border:1px solid var(--border);">`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        let notes = [
+            { day: 'Ngày 1', title: 'Tổng quan AI & CNTT 4.0', body: 'Hệ thống hóa các xu hướng chuyển đổi số và trí tuệ nhân tạo tạo sinh.' },
+            { day: 'Ngày 1', title: 'Khởi tạo NotebookLM', body: 'Tải lên 8 slide bài giảng và tạo câu hỏi ôn tập tự động.' },
+            { day: 'Ngày 2', title: 'Kỹ thuật Prompt hiệu quả', body: 'Áp dụng công thức Vai trò + Bối cảnh + Nhiệm vụ + Định dạng.' },
+            { day: 'Ngày 2', title: 'Phân loại nguồn tài liệu', body: 'Tách biệt tài liệu PDF lý thuyết và video thực hành.' },
+            { day: 'Ngày 3', title: 'Thiết kế Wireframe ứng dụng', body: 'Phác thảo giao diện chính và luồng thêm/xóa ghi chú trên Canva.' },
+            { day: 'Ngày 3', title: 'Xây dựng cấu trúc dữ liệu', body: 'Xác định các trường thông tin: Ngày tạo, Tiêu đề, Nội dung, Nhãn.' },
+            { day: 'Ngày 4', title: 'Tích hợp tính năng AI tóm tắt', body: 'Sử dụng Google AI Studio để tự động rút trích ý chính từ ghi chú.' },
+            { day: 'Ngày 4', title: 'Kiểm thử giao diện Sáng/Tối', body: 'Tối ưu độ tương phản màu sắc giúp bảo vệ mắt khi học ban đêm.' },
+            { day: 'Ngày 5', title: 'Rà soát 10 ghi chú thực tế', body: 'Kiểm tra tính logic và ý nghĩa ứng dụng của toàn bộ ghi chú.' },
+            { day: 'Ngày 5', title: 'Đóng gói báo cáo Assignment', body: 'Xuất file báo cáo PDF và nén đúng cú pháp quy định của FPT Polytechnic.' }
+        ];
+
+        function renderNotes() {
+            const container = document.getElementById('notes-container');
+            container.innerHTML = '';
+            const uniqueDays = new Set(notes.map(n => n.day)).size;
+
+            notes.forEach((n, index) => {
+                const div = document.createElement('div');
+                div.className = 'note-card';
+                div.innerHTML = `
+                    <button class="delete-note" onclick="deleteNote(${index})">✕</button>
+                    <span class="note-day">${n.day}</span>
+                    <h4 style="margin: 6px 0;">${n.title}</h4>
+                    <p style="font-size: 0.88rem; color: var(--text-secondary);">${n.body}</p>
+                `;
+                container.appendChild(div);
+            });
+
+            document.getElementById('note-count-pill').innerText = 
+                `📝 Số ghi chú: ${notes.length} / 10 ${notes.length >= 10 ? '(Đạt chuẩn)' : '(Chưa đủ)'}`;
+            document.getElementById('day-count-pill').innerText = 
+                `📅 Thời gian áp dụng: ${uniqueDays} ngày ${uniqueDays >= 5 ? '(Đạt chuẩn)' : '(Cần đủ 5 ngày)'}`;
+        }
+
+        function addNote() {
+            const title = document.getElementById('note-title').value.trim();
+            const day = document.getElementById('note-day').value;
+            const body = document.getElementById('note-body').value.trim();
+            if (!title || !body) return alert('Vui lòng nhập đầy đủ tiêu đề và nội dung ghi chú!');
+
+            notes.unshift({ day, title, body });
+            document.getElementById('note-title').value = '';
+            document.getElementById('note-body').value = '';
+            renderNotes();
+        }
+
+        function deleteNote(index) {
+            notes.splice(index, 1);
+            renderNotes();
+        }
+
+        function runAISummary() {
+            const box = document.getElementById('ai-result');
+            box.style.display = 'block';
+            const uniqueDays = new Set(notes.map(n => n.day)).size;
+            box.innerHTML = `
+                <strong>🤖 Trợ lý AI Phân tích (Y6):</strong><br>
+                • Tổng cộng bạn đang quản lý <strong>${notes.length} ghi chú</strong> trải đều trong <strong>${uniqueDays} ngày</strong>.<br>
+                • Chủ đề trọng tâm: <em>Ứng dụng NotebookLM, thiết kế Wireframe và tích hợp AI vào học tập</em>.<br>
+                • Trạng thái Assignment: <strong>${notes.length >= 10 && uniqueDays >= 5 ? 'Đủ điều kiện bảo vệ!' : 'Cần bổ sung thêm ghi chú để đạt mức tối thiểu.'}</strong>
+            `;
+        }
+
+        /* ================= SUBMIT ZIP NAME GENERATOR ================= */
+        function generateZipName() {
+            const id = document.getElementById('sv-id').value.trim() || 'PS12345';
+            const name = document.getElementById('sv-name').value.trim().replace(/\s+/g, '') || 'NguyenVanA';
+            document.getElementById('zip-output').innerText = `${id}-${name}_CNTT4.0_Assignment.zip`;
+        }
+
+        renderNotes();
+    </script>
+</body>
+</html>
